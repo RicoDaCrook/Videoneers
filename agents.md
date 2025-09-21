@@ -1,104 +1,76 @@
 # AGENTS.md
 
-## Projekt: Videoneers - Premium Digital Agency Website 🚀
-
-### Ziel
-Eine hochperformante, SEO-optimierte Agentur-Website, die mit Next.js 14 (App Router) gebaut ist.  
-Alle Dateien, Ordner und Inhalte müssen so erstellt werden, dass das Projekt direkt build- und deployfähig ist.
+## Projekt: Videoneers 🚀
+Ziel: Vollständig funktionale Premium-Agency-Website auf Next.js 14 mit TypeScript, Tailwind, Framer Motion, Sanity CMS, Vercel Deploy.
 
 ---
 
-## Tech-Stack
-- Framework: Next.js 14 (App Router)
-- Sprache: TypeScript
-- Styling: Tailwind CSS (+ @tailwindcss/typography)
-- Animationen: Framer Motion
-- 3D: Three.js (@react-three/fiber + drei)
-- CMS: Sanity
-- E-Mail: Resend
-- Analytics: Vercel Analytics + GA4
-- Icons: lucide-react
-- Toasts: sonner
-- Validation: zod
-- Utilities: clsx, tailwind-merge
+## Arbeitsweise von Codex
+
+### 1. Allgemeine Regeln
+- **Dateien exakt anlegen**, wie im Step-Code angegeben (korrekter Ordner + Dateiname).  
+- Wenn eine Datei nicht vorhanden ist, **neu erstellen**.  
+- Wenn ein Feature neue Dateien braucht (z. B. Cookie-Banner, API-Route), **selbstständig logisch ergänzen**.  
+- **Immer TypeScript verwenden** (`.ts` / `.tsx`).  
+- **Imports checken**: Pfade immer als `@/...`.  
+- **Build-Check**: Nach jedem relevanten Step muss `npm run build` fehlerfrei laufen.  
+- **Commit Messages**: Nutze `chore:`, `feat:`, `fix:` je nach Änderung.  
+
+### 2. Workflow in Steps
+Das Projekt wird **in klaren Steps** aufgebaut.  
+- Ich (der Nutzer) gebe dir in jedem Step Code-Inhalte (als Text).  
+- Du erstellst daraus **echte Dateien** im Repo.  
+- Danach **commit & push**.  
+- Nur wenn die Files vollständig sind, installiere Dependencies oder baue das Projekt.
+
+Beispiel-Workflow:  
+- **Step 1** → Base Files (`package.json`, `tailwind.config.ts`, `next.config.js`, `.gitignore`, `README.md`)  
+- **Step 2** → Layout, globale Styles, erste Pages  
+- **Step 3** → Komponenten & Sections  
+- **Step 4** → Sanity, API-Routen, CMS, Extras  
+
+### 3. Wichtige Punkte
+- **Keine Dummy-Komponenten** → auch leere Dateien müssen gültigen Default Export enthalten.  
+- `.env.local` niemals mit echten Keys pushen (nur Platzhalter).  
+- `npm install` erst ausführen, wenn `package.json` im Repo liegt.  
+- Wenn ein Step Code-Fehler hat → minimal korrigieren, damit Build läuft.  
+- Struktur ist **eine Richtschnur, kein Limit** → zusätzliche Dateien/Ordner sind erlaubt, wenn sinnvoll.  
 
 ---
 
-## Projektstruktur (Basis)
-
-Dies ist die **Startstruktur** des Projekts.  
-Codex soll sie einhalten, aber **bei Bedarf darf er neue Dateien oder Unterordner ergänzen**, wenn ein Feature dies erfordert (z. B. Cookie-Banner, Analytics, Context Provider).
+## Startstruktur
 
 videoneers/
 ├── .github/workflows/deploy.yml
-├── public/
-│ ├── fonts/
-│ ├── images/
-│ ├── og/
-│ └── icons/
+├── public/ # fonts, images, og, icons
 ├── src/
 │ ├── app/ # App Router Pages & API Routes
-│ ├── components/ # Reusable Components (UI, Sections, Animations, Forms)
-│ ├── lib/ # Utilities, Constants, Animations
+│ ├── components/# UI, Sections, Animations, Forms
+│ ├── lib/ # Utilities, Constants
 │ └── hooks/ # Custom React Hooks
 ├── sanity/ # CMS Config
-├── .env.local # Environment Variables (nicht committen)
+├── .env.local # Placeholder Keys
 ├── package.json
-├── next.config.js
 ├── tailwind.config.ts
 ├── tsconfig.json
+├── next.config.js
 ├── .gitignore
 └── README.md
 
 
 ---
 
-## Regeln für Codex
-1. **Immer TypeScript verwenden.** Keine `.js`-Dateien.  
-2. **Imports strikt prüfen** → z. B. `@/components/...`, `@/lib/...`.  
-3. **Dateien exakt nach Struktur erstellen.** Wenn Inhalte nicht gegeben sind, minimal funktionsfähige Boilerplates anlegen.  
-4. **Commits sauber benennen**:
-   - `feat: ...` (Neue Features)  
-   - `fix: ...` (Bugfixes)  
-   - `chore: ...` (Konfigurationen, Minor Tasks)  
-5. **Build-Check**: Nach jedem Schritt sicherstellen, dass `npm run build` ohne Fehler durchläuft.  
-6. **Keine Dummy-Komponenten** → selbst leere Seiten müssen einen Default Export haben.  
-7. **Environment Files**: `.env.local` niemals mit echten Keys ins Repo pushen.  
-8. **SEO** berücksichtigen → `layout.tsx` enthält `metadata`, `sitemap.ts` und `robots.txt` müssen erstellt werden.  
-9. **Styling** → Mobile-First, Dark Theme, mit definierten Farben:
-   - Cyber Cyan: `#00D4FF`  
-   - Neon Lime: `#00FF88`  
-   - Hot Orange: `#FF6B35`  
-   - Deep Black: `#0A0A0A`  
-10. **Komponenten wiederverwendbar** halten (UI wie `GlowCard`, `MagneticButton`, `GradientText` etc.).  
-11. **Projektstruktur ist eine Richtschnur, kein Limit.**  
-    - Wenn ein neues Feature (z. B. Cookie-Banner, Analytics, Context Provider) eine neue Datei erfordert, darf Codex diese anlegen.  
-    - Neue Dateien müssen sinnvoll im passenden Bereich erstellt werden (z. B. `components/ui`, `lib`, `hooks` oder `app/api`).  
-    - Wichtig: Ordner- und Dateinamen müssen konsistent und logisch bleiben.
+## Offene ToDos (später in Steps)
+- Impressum & Datenschutz anpassen  
+- `.env.local` mit echten Keys füllen  
+- Kontaktformular an API anbinden  
+- Cookie-Banner Logik ausbauen  
+- Sanity Blog/Portfolio vervollständigen  
+- 404-Page + Light/Dark Mode optional  
 
 ---
 
-## Workflow für Codex
-1. **Alle fehlenden Dateien & Ordner anlegen.**  
-2. Code aus meinen Vorgaben (im Chat oder aus Repo) **einfügen**.  
-3. Bei Unklarheiten **minimal funktionierende Boilerplates** generieren.  
-4. Nach Fertigstellung: `npm install` und `npm run build`.  
-5. Fehler **automatisch fixen** und nur validen Code committen.  
-6. Jeder Commit: **saubere Commit-Message** nach Konvention.  
+## Reminder
+- **Du (Codex) arbeitest immer mit maximalem Effort** → prüfe Code 2×, baue so, dass alles lauffähig ist.  
+- **Ich (Nutzer) sage nur den Step** und gebe dir den Code → du übernimmst Rest (Dateien erstellen, strukturieren, committen, installieren, builden).  
 
----
-
-## Offene ToDos (nach Dateierstellung)
-- Impressum & Datenschutz anpassen (Name, USt-ID, Mailadressen).  
-- `.env.local` mit echten API Keys füllen (Sanity, Resend, OpenAI, Analytics).  
-- Kontaktformular (`src/app/contact/page.tsx`) an `api/contact` anbinden.  
-- Cookie-Banner Logik ausbauen (aktuell nur `console.log`).  
-- Sanity-Anbindung für Blog & Portfolio vervollständigen.  
-- Optional: 404-Seite + Light/Dark-Mode Toggle hinzufügen.  
-
----
-
-## Wichtig
-- **Maximaler Effort**: Vor jedem Schreibvorgang den Code doppelt prüfen.  
-- **Keine Abkürzungen**: Alle Dateien so anlegen, dass das Projekt direkt lauffähig ist.  
-- **Deployment**: Nach erfolgreichem Build → Vercel Deploy vorbereiten.  
