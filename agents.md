@@ -36,6 +36,10 @@ Beispiel-Workflow:
 - Wenn ein Step Code-Fehler hat → minimal korrigieren, damit Build läuft.  
 - Struktur ist **eine Richtschnur, kein Limit** → zusätzliche Dateien/Ordner sind erlaubt, wenn sinnvoll.  
 
+### 4. Setup-Regel
+- Bevor `npm install` oder ein Build-Script ausgeführt wird, müssen alle Basisdateien (`package.json`, `tsconfig.json`, `next.config.js`, `tailwind.config.ts`, `.gitignore`) im Repository existieren und committed sein.  
+- Setup-Skripte dürfen **nicht automatisch** laufen, bevor die Dateien erstellt wurden.  
+
 ---
 
 ## Startstruktur
