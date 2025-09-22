@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Font Face for Clash Display */
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Variable.woff2') format('woff2');
+  font-weight: 200 900;
+  font-display: swap;
+  font-style: normal;
+}
+
+@layer base {
+  :root {
+    --cyber-cyan: #00D4FF;
+    --neon-lime: #00FF88;
+    --hot-orange: #FF6B35;
+    --deep-black: #0A0A0A;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-deep-black text-white;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  ::selection {
+    @apply bg-cyber-cyan text-deep-black;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-rich-gray-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-rich-gray-700 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-rich-gray-600;
+  }
+}
+
+@layer utilities {
+  /* Text Gradient Animation */
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Glow Effect */
+  .glow {
+    box-shadow: 
+      0 0 20px rgba(0, 212, 255, 0.5),
+      0 0 40px rgba(0, 212, 255, 0.3),
+      0 0 60px rgba(0, 212, 255, 0.1);
+  }
+
+  /* Slide Animation */
+  @keyframes slide {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-slide {
+    animation: slide 3s linear infinite;
+  }
+
+  /* Morph Animation */
+  .morph-gradient {
+    background: radial-gradient(
+      circle at 30% 50%,
+      var(--cyber-cyan) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 70% 50%,
+      var(--neon-lime) 0%,
+      transparent 50%
+    );
+    filter: blur(40px);
+    opacity: 0.4;
+  }
+}
+
+/* Loading Animation */
+.loader {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: inline-block;
+  border-top: 4px solid var(--cyber-cyan);
+  border-right: 4px solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
