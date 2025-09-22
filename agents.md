@@ -42,24 +42,6 @@ Beispiel-Workflow:
 
 ---
 
-## Startstruktur
-
-videoneers/
-├── .github/workflows/deploy.yml
-├── public/ # fonts, images, og, icons
-├── src/
-│ ├── app/ # App Router Pages & API Routes
-│ ├── components/# UI, Sections, Animations, Forms
-│ ├── lib/ # Utilities, Constants
-│ └── hooks/ # Custom React Hooks
-├── sanity/ # CMS Config
-├── .env.local # Placeholder Keys
-├── package.json
-├── tailwind.config.ts
-├── tsconfig.json
-├── next.config.js
-├── .gitignore
-└── README.md
 
 
 ---
