@@ -3,32 +3,82 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
-import { ArrowUpRight, TrendingUp, Users, Eye, DollarSign } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import { TrendingUp, Users, Eye, DollarSign } from 'lucide-react'
 import GlowCard from '@/components/ui/GlowCard'
 
-const caseStudies = [
+type CaseStudyResult = {
+  metric: string
+  value: string
+  change?: string
+  icon: LucideIcon
+}
+
+type CaseStudy = {
+  id: number
+  client: string
+  industry: string
+  image?: {
+    src: string
+    alt: string
+    width: number
+    height: number
+  }
+  challenge: string
+  solution: string[]
+  results: CaseStudyResult[]
+  testimonial: string
+  duration: string
+  insights?: string[]
+  outlook?: string
+  dataSource?: string
+}
+
+const caseStudies: CaseStudy[] = [
   {
     id: 1,
-    client: 'TechStart Berlin',
-    industry: 'SaaS Startup',
-    image: '/images/case-1.jpg',
-    challenge: 'Keine Online-Präsenz, 0 Leads pro Monat',
-    solution: 'Full-Stack Website + SEO + LinkedIn Ads',
-    results: [
-      { metric: 'Leads/Monat', value: '147', change: '+∞%', icon: TrendingUp },
-      { metric: 'Conversion Rate', value: '4.2%', change: '+320%', icon: DollarSign },
-      { metric: 'Organischer Traffic', value: '12.5K', change: '+890%', icon: Users },
+    client: 'Vinyl Revival Store',
+    industry: 'Lokaler Handel → E-Commerce',
+    image: {
+      src: '/images/case-studies/vinyl-revival-seo-growth.png',
+      alt: 'Google-Analytics-Dashboard mit organischem Wachstum und 10.000 € Monatsumsatz für einen Vinyl-Shop',
+      width: 1000,
+      height: 520,
+    },
+    challenge:
+      'Stationärer Schallplattenhändler mit 200–300 täglichen Besuchern und nur 450 € Gesamtumsatz zwischen März und November 2024.',
+    solution: [
+      'Aufbau SEO-optimierter Filterstrukturen für Formate, Genres und Künstler.',
+      'Saubere Indexierung und Crawling-Strategie inklusive interner Verlinkung.',
+      'UX-Optimierungen im Checkout ohne weitere Marketing- oder Ads-Budgets.',
     ],
-    testimonial: 'videoneers hat unser Business transformiert. Von 0 auf 147 qualifizierte Leads im Monat!',
-    duration: '3 Monate',
+    results: [
+      { metric: 'Monatsumsatz', value: '10.000 €', change: '↑ von 450 € in < 12 Monaten', icon: DollarSign },
+      { metric: 'Aktive Nutzer (Sep 2025)', value: '8.000+', change: '+4.275 % YoY', icon: Users },
+      { metric: 'Neue Nutzeranteil', value: '≈ 100 %', change: '+4.243 % YoY', icon: TrendingUp },
+    ],
+    testimonial:
+      '„SEO war unser Gamechanger: Innerhalb eines Jahres sind wir von stagnierenden Verkäufen zu fünfstelligen Monatsumsätzen gewachsen.“',
+    duration: 'Nov 2024 – Sep 2025',
+    insights: [
+      'Das Wachstum wurde vollständig organisch erzielt – die SEO-Filter erschlossen komplett neue Zielgruppen.',
+      'Der Analytics-Screenshot belegt signifikante Steigerungen bei Nutzer:innen (+4.275 %), neuen Nutzer:innen (+4.243 %) und Ereignissen (+5.714 %).',
+      'Die Umsatzkurve stieg nach der Implementierung der SEO-Architektur sprunghaft von 450 € Gesamtumsatz auf 10.000 € Monatsumsatz.',
+    ],
+    outlook:
+      'Beschaffung und Lagerbestand werden aktuell skaliert; im nächsten Schritt folgen internationale SEO-Landingpages und Content-Hubs, um den Momentum-Effekt auszubauen.',
+    dataSource: 'Google Analytics · 01.11.2024 – 18.09.2025',
   },
   {
     id: 2,
     client: 'FashionForward',
     industry: 'E-Commerce',
-    image: '/images/case-2.jpg',
     challenge: 'Stagnierender Online-Shop, hohe Absprungrate',
-    solution: 'Shop-Redesign + Performance Marketing + Email Automation',
+    solution: [
+      'Shop-Redesign mit Conversion-optimierten Templates.',
+      'Always-on Performance-Marketing-Kampagnen.',
+      'Lifecycle-E-Mail-Automation für Wiederkäufer:innen.',
+    ],
     results: [
       { metric: 'Umsatz', value: '+385%', change: '+385%', icon: DollarSign },
       { metric: 'ROAS', value: '8.7x', change: '+435%', icon: TrendingUp },
@@ -41,9 +91,12 @@ const caseStudies = [
     id: 3,
     client: 'Coach Excellence',
     industry: 'Personal Coaching',
-    image: '/images/case-3.jpg',
+    solution: [
+      'Personal Branding inklusive Content-Redaktionsplan.',
+      'Always-on Social-Media-Distribution mit Paid Push.',
+      'High-Ticket-Funnel mit automatisierten Nurturing-Sequenzen.',
+    ],
     challenge: 'Lokaler Coach ohne digitale Reichweite',
-    solution: 'Personal Brand Building + Content Strategy + Funnel',
     results: [
       { metric: 'Social Media Reach', value: '1.2M', change: '+12,000%', icon: Eye },
       { metric: 'Kunden', value: '+68', change: '+680%', icon: Users },
@@ -100,7 +153,7 @@ export default function CaseStudies() {
               transition={{ duration: 0.7, delay: index * 0.2 }}
             >
               <GlowCard className="overflow-hidden">
-                <div className={`grid lg:grid-cols-2 gap-12 p-8 lg:p-12 ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
+                <div className="grid lg:grid-cols-2 gap-12 p-8 lg:p-12">
                   {/* Content Side */}
                   <div className={`space-y-6 ${index % 2 === 1 ? 'lg:order-2' : ''}`}>
                     <div className="flex items-center gap-4">
@@ -115,10 +168,17 @@ export default function CaseStudies() {
                         <span className="text-rich-gray-500 text-sm">Challenge</span>
                         <p className="text-white mt-1">{study.challenge}</p>
                       </div>
-                      
+
                       <div>
                         <span className="text-rich-gray-500 text-sm">Lösung</span>
-                        <p className="text-white mt-1">{study.solution}</p>
+                        <ul className="mt-2 space-y-2 text-white">
+                          {study.solution.map((item) => (
+                            <li key={item} className="flex gap-2 text-sm md:text-base text-rich-gray-100">
+                              <span className="mt-1 h-1.5 w-1.5 rounded-full bg-neon-lime" aria-hidden />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
 
                       <div>
@@ -128,40 +188,75 @@ export default function CaseStudies() {
                     </div>
 
                     {/* Results */}
-                    <div className="grid grid-cols-3 gap-4 py-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-6">
                       {study.results.map((result) => (
                         <div key={result.metric} className="text-center">
                           <result.icon className="w-5 h-5 text-neon-lime mx-auto mb-2" />
                           <div className="text-2xl font-bold text-white">{result.value}</div>
                           <div className="text-xs text-rich-gray-500">{result.metric}</div>
+                          {result.change && (
+                            <div className="text-[11px] text-rich-gray-600 mt-1">{result.change}</div>
+                          )}
                         </div>
                       ))}
                     </div>
+
+                    {study.insights && (
+                      <div>
+                        <span className="text-rich-gray-500 text-sm">Interpretation</span>
+                        <ul className="mt-2 space-y-2">
+                          {study.insights.map((insight) => (
+                            <li key={insight} className="flex gap-3 text-sm text-rich-gray-300">
+                              <span className="relative mt-1 h-1.5 w-1.5 rounded-full bg-cyber-cyan" aria-hidden />
+                              <span>{insight}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {study.outlook && (
+                      <div>
+                        <span className="text-rich-gray-500 text-sm">Ausblick</span>
+                        <p className="text-rich-gray-300 mt-2 text-sm md:text-base leading-relaxed">{study.outlook}</p>
+                      </div>
+                    )}
 
                     {/* Testimonial */}
                     <blockquote className="border-l-4 border-cyber-cyan pl-6 py-2">
                       <p className="text-rich-gray-300 italic">"{study.testimonial}"</p>
                     </blockquote>
-
-                    {/* CTA */}
-                    <button className="flex items-center gap-2 text-cyber-cyan hover:text-neon-lime transition-colors">
-                      <span className="font-semibold">Case Study Details</span>
-                      <ArrowUpRight className="w-4 h-4" />
-                    </button>
                   </div>
 
                   {/* Image Side */}
-                  <div className={`relative h-96 lg:h-auto ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyber-cyan/20 to-neon-lime/20 rounded-xl" />
-                    <div className="relative h-full bg-rich-gray-800 rounded-xl overflow-hidden">
-                      {/* Placeholder for actual screenshot */}
-                      <div className="flex items-center justify-center h-full">
-                        <div className="text-center">
-                          <div className="text-6xl mb-4">🚀</div>
-                          <p className="text-rich-gray-500">Website Screenshot</p>
+                  <div className={`space-y-4 ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
+                    <div className="relative w-full aspect-[1000/520] overflow-hidden rounded-xl border border-rich-gray-800/60 bg-rich-gray-900">
+                      <div className="absolute inset-0 bg-gradient-to-r from-cyber-cyan/15 to-neon-lime/10 mix-blend-screen" aria-hidden />
+                      {study.image ? (
+                        <Image
+                          src={study.image.src}
+                          alt={study.image.alt}
+                          fill
+                          sizes="(min-width: 1024px) 45vw, 100vw"
+                          priority={index === 0}
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-center text-rich-gray-500">
+                            <div className="text-6xl mb-4">🚀</div>
+                            <p>Screenshot in Vorbereitung</p>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
+
+                    {study.dataSource && (
+                      <div className="flex items-center gap-2 text-xs text-rich-gray-500">
+                        <Eye className="w-4 h-4 text-cyber-cyan" />
+                        <span>{study.dataSource}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </GlowCard>
