@@ -1,12 +1,14 @@
 'use client'
 
+import React from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight, Zap, Calendar } from 'lucide-react'
 import MagneticButton from '@/components/ui/MagneticButton'
 
 export default function CTA() {
   return (
-    <section className="py-32 relative overflow-hidden">
+    <section id="cta" className="py-32 relative overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-cyber-cyan/20 via-transparent to-neon-lime/20" />
@@ -66,22 +68,30 @@ export default function CTA() {
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <MagneticButton>
-              <button className="group relative px-10 py-5 bg-gradient-to-r from-cyber-cyan to-neon-lime rounded-xl font-semibold text-deep-black text-lg overflow-hidden hover:scale-105 transition-all duration-300">
+              <Link
+                href="https://cal.com/videoneers/strategie-call"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative px-10 py-5 bg-gradient-to-r from-cyber-cyan to-neon-lime rounded-xl font-semibold text-deep-black text-lg overflow-hidden hover:scale-105 transition-all duration-300"
+              >
                 <span className="relative z-10 flex items-center gap-3">
                   <Calendar className="w-6 h-6" />
                   Kostenloses Strategiegespräch
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-neon-lime to-hot-orange opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </button>
+              </Link>
             </MagneticButton>
 
             <MagneticButton>
-              <button className="px-10 py-5 border-2 border-rich-gray-700 rounded-xl font-semibold text-lg hover:border-cyber-cyan hover:text-cyber-cyan transition-all duration-300 backdrop-blur-sm group">
+              <Link
+                href="#case-studies"
+                className="px-10 py-5 border-2 border-rich-gray-700 rounded-xl font-semibold text-lg hover:border-cyber-cyan hover:text-cyber-cyan transition-all duration-300 backdrop-blur-sm group"
+              >
                 <span className="flex items-center gap-3">
-                  Live-Demo ansehen
+                  Live-Erfolge ansehen
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </span>
-              </button>
+              </Link>
             </MagneticButton>
           </div>
 

@@ -3,17 +3,7 @@ import { MetadataRoute } from 'next'
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://videoneers.de'
   
-  const staticPages = [
-    '',
-    '/services',
-    '/portfolio',
-    '/about',
-    '/blog',
-    '/contact',
-    '/impressum',
-    '/datenschutz',
-    '/agb',
-  ]
+  const staticPages = ['', '/impressum', '/datenschutz', '/agb']
 
   const staticSitemap = staticPages.map(route => ({
     url: `${baseUrl}${route}`,

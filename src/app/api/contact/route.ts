@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { z } from 'zod'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resendApiKey = process.env.RESEND_API_KEY
+const resend = resendApiKey ? new Resend(resendApiKey) : null
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name ist zu kurz'),
@@ -21,6 +22,13 @@ export async function POST(request: Request) {
     // Validate input
     const validatedData = contactSchema.parse(body)
     
+    if (!resend) {
+      return NextResponse.json(
+        { error: 'RESEND_API_KEY fehlt. Bitte in der Deployment-Umgebung hinterlegen.' },
+        { status: 503 }
+      )
+    }
+
     // Create email HTML
     const emailHtml = `
       <h2>Neue Kontaktanfrage von ${validatedData.name}</h2>
@@ -35,7 +43,7 @@ export async function POST(request: Request) {
     `
 
     // Send email via Resend
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: 'videoneers <noreply@videoneers.de>',
       to: [process.env.EMAIL_TO || 'kontakt@videoneers.de'],
       subject: `Neue Anfrage: ${validatedData.name} - ${validatedData.projectType?.join(', ') || 'Allgemein'}`,

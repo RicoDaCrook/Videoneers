@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { TypeAnimation } from 'react-type-animation'
 import { ArrowDown, Sparkles, Zap, TrendingUp } from 'lucide-react'
@@ -8,7 +9,7 @@ import GradientText from '@/components/ui/GradientText'
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Animated Background Mesh */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute inset-0 bg-gradient-to-br from-cyber-cyan/20 via-transparent to-neon-lime/20 animate-morph" />
@@ -101,22 +102,28 @@ export default function Hero() {
           className="flex flex-col sm:flex-row gap-6 justify-center items-center"
         >
           <MagneticButton>
-            <button className="group relative px-8 py-4 bg-gradient-to-r from-cyber-cyan to-neon-lime rounded-xl font-semibold text-deep-black overflow-hidden transition-all duration-300 hover:scale-105">
+            <Link
+              href="#potential"
+              className="group relative px-8 py-4 bg-gradient-to-r from-cyber-cyan to-neon-lime rounded-xl font-semibold text-deep-black overflow-hidden transition-all duration-300 hover:scale-105"
+            >
               <span className="relative z-10 flex items-center gap-2">
                 <Zap className="w-5 h-5" />
                 Potenzial-Analyse starten
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-neon-lime to-cyber-cyan opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </button>
+            </Link>
           </MagneticButton>
 
           <MagneticButton>
-            <button className="px-8 py-4 border-2 border-rich-gray-700 rounded-xl font-semibold hover:border-cyber-cyan hover:text-cyber-cyan transition-all duration-300 backdrop-blur-sm">
+            <Link
+              href="#case-studies"
+              className="px-8 py-4 border-2 border-rich-gray-700 rounded-xl font-semibold hover:border-cyber-cyan hover:text-cyber-cyan transition-all duration-300 backdrop-blur-sm"
+            >
               <span className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5" />
                 Live-Erfolge ansehen
               </span>
-            </button>
+            </Link>
           </MagneticButton>
         </motion.div>
 

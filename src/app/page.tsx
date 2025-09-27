@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Hero from '@/components/sections/Hero'
 import Services from '@/components/sections/Services'
@@ -13,6 +12,7 @@ import FAQ from '@/components/sections/FAQ'
 import CTA from '@/components/sections/CTA'
 import LiveStats from '@/components/sections/LiveStats'
 import FloatingElements from '@/components/animations/FloatingElements'
+import Contact from '@/components/sections/Contact'
 
 const ParticleBackground = dynamic(
   () => import('@/components/animations/ParticleBackground'),
@@ -20,14 +20,6 @@ const ParticleBackground = dynamic(
 )
 
 export default function HomePage() {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) return null
-
   return (
     <>
       <ParticleBackground />
@@ -56,10 +48,13 @@ export default function HomePage() {
       
       {/* Testimonials */}
       <Testimonials />
-      
+
+      {/* Contact */}
+      <Contact />
+
       {/* FAQ */}
       <FAQ />
-      
+
       {/* CTA */}
       <CTA />
     </>

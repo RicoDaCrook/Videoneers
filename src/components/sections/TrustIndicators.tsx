@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion'
 import { Shield, Award, Zap, HeartHandshake } from 'lucide-react'
-import CountUp from '@/components/ui/CountUp'
 
 export default function TrustIndicators() {
   const indicators = [
@@ -29,7 +28,7 @@ export default function TrustIndicators() {
   ]
 
   return (
-    <section className="py-16 border-y border-rich-gray-800">
+    <section id="trust" className="py-16 border-y border-rich-gray-800">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {indicators.map((indicator, index) => (

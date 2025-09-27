@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { 
@@ -63,7 +64,7 @@ export default function Process() {
   })
 
   return (
-    <section ref={ref} className="py-32 relative">
+    <section ref={ref} id="process" className="py-32 relative">
       <div className="max-w-7xl mx-auto px-6">
         {/* Section Header */}
         <motion.div
@@ -156,9 +157,12 @@ export default function Process() {
           <p className="text-rich-gray-400 mb-6">
             Bereit für Ihre digitale Transformation?
           </p>
-          <button className="px-8 py-4 bg-gradient-to-r from-hot-orange to-cyber-cyan rounded-xl font-semibold text-deep-black hover:scale-105 transition-transform duration-300">
+          <Link
+            href="#contact"
+            className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-hot-orange to-cyber-cyan rounded-xl font-semibold text-deep-black hover:scale-105 transition-transform duration-300"
+          >
             Prozess starten
-          </button>
+          </Link>
         </motion.div>
       </div>
     </section>

@@ -30,34 +30,54 @@ export default function Contact() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleVoiceRecord = async () => {
-    if (!isRecording) {
-      setIsRecording(true)
-      toast.info('Sprechen Sie jetzt Ihre Nachricht...')
-      
-      // Hier würde die echte Audio-Aufnahme implementiert
-      setTimeout(() => {
-        setIsRecording(false)
-        toast.success('Nachricht aufgenommen und transkribiert!')
-        setFormData({
-          ...formData,
-          message: 'Transkribierte Nachricht: Ich interessiere mich für eine neue Website mit SEO-Optimierung...'
-        })
-      }, 3000)
-    } else {
+  const handleVoiceRecord = () => {
+    if (isRecording) {
       setIsRecording(false)
+      return
     }
+
+    setIsRecording(true)
+    toast.warning('Voice Upload benötigt eine Speech-to-Text API. Bitte hinterlege den Service, bevor du hier startest.')
+    setTimeout(() => setIsRecording(false), 2000)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
-    // API Call würde hier stattfinden
-    setTimeout(() => {
-      setIsSubmitting(false)
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          projectType: formData.projectType,
+        }),
+      })
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null)
+        throw new Error(payload?.error ?? 'Anfrage konnte nicht gesendet werden.')
+      }
+
       toast.success('Nachricht gesendet! Wir melden uns in < 2 Stunden.')
-    }, 2000)
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        company: '',
+        budget: '',
+        message: '',
+        projectType: [],
+      })
+    } catch (error) {
+      console.error('contact form submit failed', error)
+      toast.error('Bitte API-Key für RESEND konfigurieren oder erneut versuchen.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const projectTypes = [
@@ -340,9 +360,14 @@ export default function Contact() {
                   30 Min. kostenloses Strategiegespräch
                 </p>
                 
-                <button className="w-full px-6 py-3 bg-neon-lime text-deep-black rounded-lg font-semibold hover:bg-neon-lime/90 transition-colors">
+                <a
+                  href="https://cal.com/videoneers/strategie-call"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full px-6 py-3 bg-neon-lime text-deep-black rounded-lg font-semibold text-center hover:bg-neon-lime/90 transition-colors"
+                >
                   Kalender öffnen
-                </button>
+                </a>
               </div>
             </GlowCard>
           </div>

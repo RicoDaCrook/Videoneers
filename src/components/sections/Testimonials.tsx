@@ -37,12 +37,13 @@ const testimonials = [
 
 export default function Testimonials() {
   const [current, setCurrent] = useState(0)
+  const [imageFallback, setImageFallback] = useState<Record<number, boolean>>({})
 
   const next = () => setCurrent((prev) => (prev + 1) % testimonials.length)
   const prev = () => setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length)
 
   return (
-    <section className="py-32 relative overflow-hidden">
+    <section id="testimonials" className="py-32 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
@@ -91,10 +92,23 @@ export default function Testimonials() {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-cyber-cyan to-neon-lime rounded-full p-0.5">
-                    <div className="w-full h-full bg-deep-black rounded-full flex items-center justify-center text-2xl font-bold">
-                      {testimonials[current].name[0]}
-                    </div>
+                  <div className="w-16 h-16 bg-gradient-to-br from-cyber-cyan to-neon-lime rounded-full p-0.5 overflow-hidden">
+                    {testimonials[current].image && !imageFallback[testimonials[current].id] ? (
+                      <Image
+                        src={testimonials[current].image}
+                        alt={`${testimonials[current].name} Portrait`}
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-cover rounded-full"
+                        onError={() =>
+                          setImageFallback(prev => ({ ...prev, [testimonials[current].id]: true }))
+                        }
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-deep-black rounded-full flex items-center justify-center text-2xl font-bold">
+                        {testimonials[current].name[0]}
+                      </div>
+                    )}
                   </div>
                   
                   <div>
