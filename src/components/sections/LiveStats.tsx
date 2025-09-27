@@ -1,74 +1,131 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TrendingUp, Eye, Users, Clock } from 'lucide-react'
 
-interface StatUpdate {
+type StatType = 'views' | 'conversion' | 'visitor' | 'engagement'
+
+type PreparedUpdate = {
   id: string
-  type: 'views' | 'conversion' | 'visitor' | 'engagement'
+  type: StatType
   value: string
   client: string
+  delta?: number
+}
+
+type StatUpdate = PreparedUpdate & {
   timestamp: Date
 }
 
+const updateTimeline: PreparedUpdate[] = [
+  {
+    id: 'vinyl-boost-1',
+    type: 'views',
+    value: '+1.240 organische Sitzungen',
+    client: 'Vinyl Revival Store',
+    delta: 1240,
+  },
+  {
+    id: 'techstart-leads',
+    type: 'conversion',
+    value: '+18 qualifizierte B2B-Leads',
+    client: 'TechStart Berlin',
+  },
+  {
+    id: 'coach-community',
+    type: 'visitor',
+    value: '+312 Funnel-Registrierungen',
+    client: 'Coach Excellence',
+  },
+  {
+    id: 'fashion-engagement',
+    type: 'engagement',
+    value: '3.4x längere Verweildauer',
+    client: 'FashionForward',
+  },
+  {
+    id: 'vinyl-boost-2',
+    type: 'views',
+    value: '+985 SEO-Besucher',
+    client: 'Vinyl Revival Store',
+    delta: 985,
+  },
+  {
+    id: 'logichain-deals',
+    type: 'conversion',
+    value: '+4 Enterprise-Deals',
+    client: 'LogiChain Suite',
+  },
+  {
+    id: 'clinic-visitors',
+    type: 'visitor',
+    value: '+206 Terminbuchungen',
+    client: 'HeartCare Clinic',
+  },
+  {
+    id: 'saas-engagement',
+    type: 'engagement',
+    value: '2.1x Produktnutzung',
+    client: 'SaaS Velocity',
+  },
+]
+
 export default function LiveStats() {
-  const [stats, setStats] = useState<StatUpdate[]>([])
-  const [totalViews, setTotalViews] = useState(2743892)
+  const [stats, setStats] = useState<StatUpdate[]>(() =>
+    updateTimeline.slice(0, 4).map(update => ({ ...update, timestamp: new Date() }))
+  )
+  const pointerRef = useRef(4)
+
+  const totalViews = useMemo(() => {
+    const baseline = 2743892
+    const incremental = stats
+      .filter(update => update.type === 'views')
+      .reduce((sum, update) => sum + (update.delta ?? 0), 0)
+
+    return baseline + incremental
+  }, [stats])
 
   useEffect(() => {
-    // Simuliere Live-Updates
+    if (!updateTimeline.length) return
+
     const interval = setInterval(() => {
-      const newStat: StatUpdate = {
-        id: Date.now().toString(),
-        type: ['views', 'conversion', 'visitor', 'engagement'][Math.floor(Math.random() * 4)] as any,
-        value: getRandomValue(),
-        client: getRandomClient(),
-        timestamp: new Date(),
-      }
-      
-      setStats(prev => [newStat, ...prev.slice(0, 4)])
-      setTotalViews(prev => prev + Math.floor(Math.random() * 100))
-    }, 3000)
+      setStats(prev => {
+        const nextUpdate = updateTimeline[pointerRef.current % updateTimeline.length]
+        pointerRef.current += 1
+
+        const hydratedUpdate: StatUpdate = {
+          ...nextUpdate,
+          timestamp: new Date(),
+        }
+
+        return [hydratedUpdate, ...prev].slice(0, 4)
+      })
+    }, 4000)
 
     return () => clearInterval(interval)
   }, [])
 
-  function getRandomValue() {
-    const values = [
-      '+127 Views',
-      '+3.2% Conversion',
-      '+42 Visitors',
-      '2.5x Engagement',
-      '+89 Clicks',
-      '+5 Leads',
-    ]
-    return values[Math.floor(Math.random() * values.length)]
-  }
-
-  function getRandomClient() {
-    const clients = [
-      'TechStart Berlin',
-      'FashionForward',
-      'Coach Excellence',
-      'Digital Solutions',
-      'Growth Marketing',
-    ]
-    return clients[Math.floor(Math.random() * clients.length)]
-  }
-
-  const getIcon = (type: string) => {
+  const getIcon = (type: StatType) => {
     switch (type) {
-      case 'views': return Eye
-      case 'conversion': return TrendingUp
-      case 'visitor': return Users
-      case 'engagement': return Clock
-      default: return Eye
+      case 'views':
+        return Eye
+      case 'conversion':
+        return TrendingUp
+      case 'visitor':
+        return Users
+      case 'engagement':
+        return Clock
+      default:
+        return Eye
     }
   }
 
   return (
-    <div className="relative py-8 overflow-hidden bg-gradient-to-r from-rich-gray-900/50 via-transparent to-rich-gray-900/50">
+    <div
+      id="live-stats"
+      className="relative py-8 overflow-hidden bg-gradient-to-r from-rich-gray-900/50 via-transparent to-rich-gray-900/50"
+    >
       {/* Background Animation */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,#00D4FF_50%,transparent_100%)] animate-slide" />
@@ -98,7 +155,7 @@ export default function LiveStats() {
                   const Icon = getIcon(stat.type)
                   return (
                     <motion.div
-                      key={stat.id}
+                      key={`${stat.id}-${stat.timestamp.getTime()}`}
                       initial={{ y: 50, opacity: 0 }}
                       animate={{ 
                         y: index * 40,

@@ -20,12 +20,12 @@ export default function Navigation() {
   }, [])
 
   const navItems = [
-    { href: '/', label: 'Home' },
-    { href: '/services', label: 'Services' },
-    { href: '/portfolio', label: 'Portfolio' },
-    { href: '/about', label: 'Über uns' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/contact', label: 'Kontakt' },
+    { href: '#home', label: 'Home' },
+    { href: '#services', label: 'Services' },
+    { href: '#case-studies', label: 'Case Studies' },
+    { href: '#process', label: 'Ablauf' },
+    { href: '#testimonials', label: 'Stimmen' },
+    { href: '#contact', label: 'Kontakt' },
   ]
 
   return (
@@ -58,6 +58,7 @@ export default function Navigation() {
                 <MagneticButton key={item.href}>
                   <Link
                     href={item.href}
+                    scroll
                     className="relative py-2 text-rich-gray-300 hover:text-white transition-colors group"
                   >
                     {item.label}
@@ -94,7 +95,8 @@ export default function Navigation() {
               {/* CTA Button */}
               <MagneticButton>
                 <Link
-                  href="/contact"
+                  href="#contact"
+                  scroll
                   className="px-6 py-3 bg-gradient-to-r from-cyber-cyan to-neon-lime rounded-lg font-semibold text-deep-black hover:scale-105 transition-transform"
                 >
                   Projekt starten
@@ -139,6 +141,7 @@ export default function Navigation() {
                   >
                     <Link
                       href={item.href}
+                      scroll
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="text-2xl font-display text-white hover:text-cyber-cyan transition-colors"
                     >
@@ -154,7 +157,8 @@ export default function Navigation() {
                   className="pt-6 border-t border-rich-gray-800"
                 >
                   <Link
-                    href="/contact"
+                    href="#contact"
+                    scroll
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="block w-full px-6 py-3 bg-gradient-to-r from-cyber-cyan to-neon-lime rounded-lg font-semibold text-deep-black text-center"
                   >

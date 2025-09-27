@@ -10,22 +10,29 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { audio } = voiceSchema.parse(body)
 
-    // Here you would integrate with a speech-to-text service
-    // For example: AssemblyAI, OpenAI Whisper, Google Speech-to-Text
-    
-    // Mock response for now
-    const mockTranscription = "Ich möchte eine neue Website für mein Unternehmen erstellen lassen. Wir brauchen SEO-Optimierung und Social Media Integration."
-    
-    // You could also use OpenAI to summarize the transcription
-    const summary = {
-      transcription: mockTranscription,
-      keywords: ['Website', 'SEO', 'Social Media'],
-      estimatedBudget: '10.000 - 20.000 €',
-      projectType: 'Website mit Marketing',
-      urgency: 'Normal',
+    if (!process.env.OPENAI_API_KEY && !process.env.ASSEMBLYAI_API_KEY) {
+      return NextResponse.json(
+        {
+          error:
+            'Kein Speech-to-Text-Anbieter konfiguriert. Bitte OPENAI_API_KEY oder ASSEMBLYAI_API_KEY in der Umgebung setzen.',
+        },
+        { status: 503 }
+      )
     }
 
-    return NextResponse.json(summary, { status: 200 })
+    // Hier würde die Integration mit dem konfigurierten Speech-to-Text-Dienst erfolgen.
+    // Solange kein Provider eingebunden ist, liefern wir einen Platzhalter zurück.
+    return NextResponse.json(
+      {
+        transcription:
+          'Platzhalter: Bitte richten Sie Ihre Speech-to-Text API ein, um echte Voice Leads automatisch zu verarbeiten.',
+        keywords: [],
+        estimatedBudget: null,
+        projectType: null,
+        urgency: 'Unbekannt',
+      },
+      { status: 202 }
+    )
   } catch (error) {
     console.error('Voice processing error:', error)
     return NextResponse.json(

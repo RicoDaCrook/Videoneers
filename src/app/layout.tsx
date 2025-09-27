@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/react'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import MouseFollower from '@/components/animations/MouseFollower'
+import { CookiePreferencesProvider } from '@/components/compliance/CookiePreferences'
 import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -119,13 +120,15 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} font-body bg-deep-black text-white antialiased`}>
-        <MouseFollower />
-        <Navigation />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <Footer />
-        <Toaster 
+        <CookiePreferencesProvider>
+          <MouseFollower />
+          <Navigation />
+          <main className="min-h-screen">
+            {children}
+          </main>
+          <Footer />
+        </CookiePreferencesProvider>
+        <Toaster
           theme="dark"
           position="bottom-right"
           toastOptions={{

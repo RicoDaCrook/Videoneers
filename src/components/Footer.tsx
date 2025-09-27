@@ -1,42 +1,81 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { 
-  Instagram, 
-  Linkedin, 
-  Twitter, 
+import {
+  Instagram,
+  Linkedin,
+  Twitter,
   Github,
   Mail,
   Phone,
   MapPin,
   ArrowUpRight
 } from 'lucide-react'
+import { useCookiePreferences } from '@/components/compliance/CookiePreferences'
+import { toast } from 'sonner'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  const { openPreferences } = useCookiePreferences()
+  const [newsletterEmail, setNewsletterEmail] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const footerLinks = {
     services: [
-      { label: 'Web Development', href: '/services#web' },
-      { label: 'SEO & SEA', href: '/services#seo' },
-      { label: 'Social Media', href: '/services#social' },
-      { label: 'App Development', href: '/services#app' },
-      { label: 'E-Commerce', href: '/services#ecommerce' },
+      { label: 'Web Development', href: '#services' },
+      { label: 'SEO & SEA', href: '#services' },
+      { label: 'Social Media', href: '#services' },
+      { label: 'App Development', href: '#services' },
+      { label: 'E-Commerce', href: '#services' },
     ],
     company: [
-      { label: 'Über uns', href: '/about' },
-      { label: 'Portfolio', href: '/portfolio' },
-      { label: 'Blog', href: '/blog' },
-      { label: 'Karriere', href: '/careers' },
-      { label: 'Kontakt', href: '/contact' },
+      { label: 'Case Studies', href: '#case-studies' },
+      { label: 'Unser Prozess', href: '#process' },
+      { label: 'FAQ', href: '#faq' },
+      { label: 'Testimonials', href: '#testimonials' },
+      { label: 'Kontakt', href: '#contact' },
     ],
     legal: [
       { label: 'Impressum', href: '/impressum' },
       { label: 'Datenschutz', href: '/datenschutz' },
       { label: 'AGB', href: '/agb' },
-      { label: 'Cookie-Einstellungen', href: '#', onClick: () => console.log('Cookie settings') },
+      { label: 'Cookie-Einstellungen', href: '#', onClick: openPreferences },
     ],
+  }
+
+  const handleNewsletterSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+
+    if (!newsletterEmail) {
+      toast.error('Bitte geben Sie Ihre E-Mail-Adresse ein.')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: newsletterEmail }),
+      })
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null)
+        throw new Error(payload?.error ?? 'Newsletter-Anmeldung fehlgeschlagen.')
+      }
+
+      toast.success('Danke! Bitte bestätigen Sie Ihre Anmeldung in Ihrem Postfach.')
+      setNewsletterEmail('')
+    } catch (error) {
+      console.error('newsletter signup failed', error)
+      toast.error('Newsletter-API benötigt einen RESEND_API_KEY oder ähnliche Integration.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const socialLinks = [
@@ -60,17 +99,20 @@ export default function Footer() {
                 Wöchentliche Insights zu Digital Marketing, Tech & Growth
               </p>
             </div>
-            <form className="flex gap-4 w-full md:w-auto">
+            <form onSubmit={handleNewsletterSubmit} className="flex gap-4 w-full md:w-auto">
               <input
                 type="email"
                 placeholder="ihre@email.de"
+                value={newsletterEmail}
+                onChange={(event) => setNewsletterEmail(event.target.value)}
                 className="px-4 py-3 bg-rich-gray-900 border border-rich-gray-800 rounded-lg focus:border-cyber-cyan focus:outline-none transition-colors flex-1 md:w-64"
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-gradient-to-r from-cyber-cyan to-neon-lime rounded-lg font-semibold text-deep-black hover:scale-105 transition-transform"
+                disabled={isSubmitting}
+                className="px-6 py-3 bg-gradient-to-r from-cyber-cyan to-neon-lime rounded-lg font-semibold text-deep-black hover:scale-105 transition-transform disabled:opacity-50 disabled:hover:scale-100"
               >
-                Abonnieren
+                {isSubmitting ? 'Wird gesendet…' : 'Abonnieren'}
               </button>
             </form>
           </div>
@@ -135,6 +177,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
+                    scroll
                     className="text-rich-gray-400 hover:text-white transition-colors inline-flex items-center gap-1 group"
                   >
                     {link.label}
@@ -153,6 +196,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
+                    scroll
                     className="text-rich-gray-400 hover:text-white transition-colors inline-flex items-center gap-1 group"
                   >
                     {link.label}

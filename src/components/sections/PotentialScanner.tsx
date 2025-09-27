@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  TrendingUp, 
-  Globe, 
+import {
+  TrendingUp,
+  Globe,
   Users, 
   ShoppingBag,
   Target,
@@ -74,48 +74,161 @@ const questions = [
   },
 ]
 
+const improvementLibrary: Record<string, string> = {
+  website: 'Website-Refresh mit Core-Web-Vitals-Optimierung und SEO-Grundgerüst starten.',
+  traffic: 'Organischen Traffic über Content Hubs und gezielte Performance-Kampagnen skalieren.',
+  social: 'Social-Media-Flywheel mit Kurzvideo-Content und Community-Building aufsetzen.',
+  ads: 'Paid-Media-Framework mit klarer Attribution und laufender Budget-Optimierung etablieren.',
+  conversion: 'Conversion-Rate-Optimierung inkl. Funnel-A/B-Tests und Marketing-Automation durchführen.',
+}
+
+type ScanResult = {
+  score: number
+  opportunity: number
+  summary: string
+  improvements: string[]
+}
+
+const evaluationBands = [
+  {
+    min: 0,
+    title: 'Hoher Wachstumshebel',
+    summary:
+      'Ihre digitalen Kanäle sind kaum erschlossen. Mit gezielten Quick Wins lassen sich kurzfristig starke Umsatzsprünge erzielen.',
+  },
+  {
+    min: 45,
+    title: 'Solides Fundament, viel Luft nach oben',
+    summary:
+      'Einige Kernbereiche funktionieren bereits, allerdings liegen klare Chancen in Skalierung und Effizienz.',
+  },
+  {
+    min: 70,
+    title: 'Fast ausgeschöpft',
+    summary:
+      'Sie haben bereits viel umgesetzt. Jetzt geht es um Feintuning, Automatisierung und internationale Skalierung.',
+  },
+]
+
 export default function PotentialScanner() {
   const [currentStep, setCurrentStep] = useState(0)
   const [answers, setAnswers] = useState<Record<string, number>>({})
   const [showResults, setShowResults] = useState(false)
+  const [result, setResult] = useState<ScanResult | null>(null)
+
+  const { minImpact, maxImpact } = useMemo(() => {
+    return questions.reduce(
+      (acc, question) => {
+        const impacts = question.options.map(option => option.impact)
+        return {
+          minImpact: acc.minImpact + Math.min(...impacts),
+          maxImpact: acc.maxImpact + Math.max(...impacts),
+        }
+      },
+      { minImpact: 0, maxImpact: 0 }
+    )
+  }, [])
 
   const handleAnswer = (questionId: string, value: number) => {
-    setAnswers({ ...answers, [questionId]: value })
-    
-    if (currentStep < questions.length - 1) {
-      setTimeout(() => setCurrentStep(currentStep + 1), 300)
-    } else {
-      calculateResults()
+    setAnswers(prev => {
+      const nextAnswers = { ...prev, [questionId]: value }
+
+      if (currentStep < questions.length - 1) {
+        setTimeout(() => setCurrentStep(step => Math.min(step + 1, questions.length - 1)), 300)
+      } else {
+        calculateResults(nextAnswers)
+      }
+
+      return nextAnswers
+    })
+  }
+
+  const calculateResults = async (currentAnswers: Record<string, number>) => {
+    const totalImpact = questions.reduce((sum, question) => {
+      const answer = question.options.find(option => option.value === currentAnswers[question.id])
+      return sum + (answer?.impact ?? 0)
+    }, 0)
+
+    const normalizedScore = Math.round(
+      ((totalImpact - minImpact) / Math.max(1, maxImpact - minImpact)) * 100
+    )
+
+    const opportunity = Math.max(0, 100 - normalizedScore)
+
+    const improvementCandidates = questions
+      .map(question => {
+        const selectedImpact =
+          question.options.find(option => option.value === currentAnswers[question.id])?.impact ?? 0
+        const bestImpact = Math.max(...question.options.map(option => option.impact))
+
+        return {
+          id: question.id,
+          gap: bestImpact - selectedImpact,
+        }
+      })
+      .filter(item => item.gap > 0)
+      .sort((a, b) => b.gap - a.gap)
+
+    const improvements = improvementCandidates
+      .slice(0, 3)
+      .map(candidate => improvementLibrary[candidate.id])
+      .filter(Boolean)
+
+    const evaluation = evaluationBands
+      .slice()
+      .reverse()
+      .find(band => normalizedScore >= band.min)
+
+    const summary = evaluation
+      ? evaluation.summary
+      : 'Wir analysieren gemeinsam, wie wir Ihre digitalen Kanäle profitabel skalieren.'
+
+    const computedResult: ScanResult = {
+      score: Math.min(100, Math.max(0, normalizedScore)),
+      opportunity,
+      summary,
+      improvements,
     }
-  }
 
-  const calculateResults = () => {
-    const totalImpact = questions.reduce((sum, q) => {
-      const answer = q.options.find(o => o.value === answers[q.id])
-      return sum + (answer?.impact || 0)
-    }, 0)
-
-    const potential = Math.max(0, 100 - (totalImpact + 50))
+    setResult(computedResult)
     setShowResults(true)
-  }
 
-  const getPotentialScore = () => {
-    const totalImpact = questions.reduce((sum, q) => {
-      const answer = q.options.find(o => o.value === answers[q.id])
-      return sum + (answer?.impact || 0)
-    }, 0)
+    try {
+      const response = await fetch('/api/potential-scan', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          answers: currentAnswers,
+          score: computedResult.score,
+          opportunity: computedResult.opportunity,
+          improvements: computedResult.improvements,
+        }),
+      })
 
-    return Math.min(500, Math.max(100, 300 - totalImpact))
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null)
+        throw new Error(payload?.error ?? 'Lead konnte nicht gespeichert werden')
+      }
+    } catch (error) {
+      console.error('Potential scan handoff failed:', error)
+      toast.error('Analyse gespeichert. Für CRM-Automation bitte API-Keys hinterlegen.')
+    }
   }
 
   const restart = () => {
     setCurrentStep(0)
     setAnswers({})
+    setResult(null)
     setShowResults(false)
   }
 
+  const score = result?.score ?? 0
+  const opportunity = result?.opportunity ?? 0
+
   return (
-    <section className="py-32 relative">
+    <section id="potential" className="py-32 relative">
       <div className="max-w-4xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -228,14 +341,14 @@ export default function PotentialScanner() {
                   }}
                   className="mb-8"
                 >
-                  <div className="relative inline-flex items-center justify-center">
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyber-cyan to-neon-lime rounded-full blur-2xl opacity-50" />
-                    <div className="relative text-7xl font-bold bg-gradient-to-r from-cyber-cyan to-neon-lime bg-clip-text text-transparent">
-                      {getPotentialScore()}%
+                    <div className="relative inline-flex items-center justify-center">
+                      <div className="absolute inset-0 bg-gradient-to-r from-cyber-cyan to-neon-lime rounded-full blur-2xl opacity-50" />
+                      <div className="relative text-7xl font-bold bg-gradient-to-r from-cyber-cyan to-neon-lime bg-clip-text text-transparent">
+                      {score}%
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-2xl font-semibold mt-4">Wachstumspotenzial</p>
-                </motion.div>
+                    <p className="text-2xl font-semibold mt-4">Wachstumspotenzial</p>
+                  </motion.div>
 
                 <div className="space-y-4 mb-8">
                   <div className="flex items-start gap-3 text-left">
@@ -243,7 +356,7 @@ export default function PotentialScanner() {
                     <div>
                       <p className="font-semibold text-white">Ihre größten Chancen:</p>
                       <p className="text-rich-gray-400 text-sm mt-1">
-                        Basierend auf Ihren Antworten könnten Sie Ihren Umsatz um bis zu {getPotentialScore()}% steigern.
+                        Basierend auf Ihren Antworten liegen rund {opportunity}% ungenutztes Umsatzpotenzial bereit.
                       </p>
                     </div>
                   </div>
@@ -253,19 +366,32 @@ export default function PotentialScanner() {
                     <div>
                       <p className="font-semibold text-white">Empfohlene Maßnahmen:</p>
                       <ul className="text-rich-gray-400 text-sm mt-1 space-y-1">
-                        {getPotentialScore() > 300 && <li>• SEO-Optimierung für mehr organischen Traffic</li>}
-                        {getPotentialScore() > 200 && <li>• Social Media Strategie für virale Reichweite</li>}
-                        {getPotentialScore() > 150 && <li>• Conversion-Optimierung Ihrer Website</li>}
-                        <li>• Performance Marketing für sofortige Ergebnisse</li>
+                        {result?.improvements?.length ? (
+                          result.improvements.map(recommendation => (
+                            <li key={recommendation}>• {recommendation}</li>
+                          ))
+                        ) : (
+                          <li>• Feintuning & Skalierung – wir planen die nächsten Wachstumssprünge gemeinsam.</li>
+                        )}
                       </ul>
                     </div>
                   </div>
                 </div>
 
+                <div className="bg-rich-gray-900/60 border border-rich-gray-800 rounded-xl p-6 mb-8 text-left">
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    Auswertung
+                  </h3>
+                  <p className="text-rich-gray-400 text-sm leading-relaxed">
+                    {result?.summary ?? 'Wir analysieren gemeinsam, wie wir Ihre digitalen Kanäle profitabel skalieren.'}
+                  </p>
+                </div>
+
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <button
                     onClick={() => {
-                      toast.success('Termin-Buchung wird vorbereitet...')
+                      const calendarUrl = 'https://cal.com/videoneers/strategie-call'
+                      window.open(calendarUrl, '_blank', 'noopener')
                     }}
                     className="px-8 py-4 bg-gradient-to-r from-cyber-cyan to-neon-lime rounded-xl font-semibold text-deep-black hover:scale-105 transition-transform duration-300"
                   >
